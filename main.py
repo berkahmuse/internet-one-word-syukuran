@@ -104,11 +104,15 @@ def duel(a, b):
     return winner, margin(a, b)
 
 
+def ranked():
+    """All candidates, best first: highest total, then shortest, then A-Z."""
+    return sorted(CANDIDATES, key=lambda w: (-total(w), len(w), w))
+
+
 def pick():
     """Pick the best word: highest total, then shortest, then A-Z.
     The winner must also win its duels against both rival entries."""
-    ranked = sorted(CANDIDATES, key=lambda w: (-total(w), len(w), w))
-    winner = ranked[0]
+    winner = ranked()[0]
     for rival in RIVALS:
         champ, _ = duel(winner, rival)
         if champ != winner:
@@ -145,6 +149,9 @@ def write_entry(word):
 
 
 def main():
+    print("ranked shortlist (weighted total, 0-10):")
+    for word in ranked():
+        print(f"  {total(word):.2f}  {word}")
     word = gate(pick())
     for rival in RIVALS:
         champ, m = duel(word, rival)
